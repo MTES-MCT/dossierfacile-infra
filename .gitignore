@@ -6,6 +6,8 @@ __pycache__/
 # C extensions
 *.so
 
+output.json
+
 requirements.txt
 
 node_modules

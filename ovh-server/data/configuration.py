@@ -1,0 +1,13 @@
+get_storage_raw_file_name = lambda env: f"s-dossierfacile-{env}-raw-file"
+get_storage_raw_file_minified_name = lambda env: f"s-dossierfacile-{env}-raw-minified"
+get_storage_watermark_doc_name = lambda env: f"s-dossierfacile-{env}-watermark-doc"
+get_storage_full_pdf_name = lambda env: f"s-dossierfacile-{env}-full-pdf"
+get_storage_filigrane_name = lambda env: f"s-filigranefacile-{env}-temp"
+
+get_user_api_tenant_name = lambda env: f"u-dossierfacile-{env}-api-tenant"
+get_user_pdf_generator_name = lambda env: f"u-dossierfacile-{env}-pdf-generator"
+get_user_process_file_name = lambda env: f"u-dossierfacile-{env}-process-file"
+get_user_bo_name = lambda env: f"u-dossierfacile-{env}-bo"
+get_user_task_scheduler_name = lambda env: f"u-dossierfacile-{env}-task-scheduler"
+get_user_file_analysis_name = lambda env: f"u-dossierfacile-{env}-file-analysis"
+get_user_filigranefacile_name = lambda env: f"u-filigranefacile-{env}"
