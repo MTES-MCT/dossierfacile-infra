@@ -216,12 +216,12 @@ files = [
 
 [[package]]
 name = "pulumi"
-version = "3.186.0"
+version = "3.187.0"
 description = "Pulumi's Python SDK"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "pulumi-3.186.0-py3-none-any.whl", hash = "sha256:01a468e4f07383211e1153d8f96acbc131e8a107ecdae5bd4dc1dc303aaa5d27"},
+    {file = "pulumi-3.187.0-py3-none-any.whl", hash = "sha256:2aaa75651884e34fef3340aa8510db85e966520c079f81e39ab8ed59c016ce92"},
 ]
 
 [package.dependencies]
@@ -232,6 +232,22 @@ pip = ">=24.3.1,<26"
 protobuf = ">=4.21,<5.0"
 pyyaml = ">=6.0,<7.0"
 semver = ">=3.0,<4.0"
+
+[[package]]
+name = "pulumi-command"
+version = "1.1.0"
+description = "The Pulumi Command Provider enables you to execute commands and scripts either locally or remotely as part of the Pulumi resource model."
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "pulumi_command-1.1.0-py3-none-any.whl", hash = "sha256:d6a62444a1a9a26ded354b668a9cf88c0becd4faacabe4adafbc8dbb65af96c4"},
+    {file = "pulumi_command-1.1.0.tar.gz", hash = "sha256:509b2709938aacfb13717b7b537d728375cd90b409093bf24dacab17d9294a4a"},
+]
+
+[package.dependencies]
+parver = ">=0.2.1"
+pulumi = ">=3.165.0,<4.0.0"
+semver = ">=2.8.1"
 
 [[package]]
 name = "pulumi-ovh"
@@ -356,4 +372,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.13"
-content-hash = "a867e7826db2f7f6c61d115132dfebdc44536b3f4efafcc08fc086e1d5d0fa0f"
+content-hash = "0b6f931614667b24a569e675caef4993a0c0cdb3456ee89d529cbc4c15eb466e"
