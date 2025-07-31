@@ -1,0 +1,3 @@
+{
+  "extraPaths": ["lib/", "data_stack/", "main_stack/", "./*"]
+}

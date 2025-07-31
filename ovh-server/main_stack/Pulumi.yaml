@@ -1,0 +1,8 @@
+name: main
+description: Main configuration of the ovh project
+runtime:
+  name: python
+  options:
+    typechecker: pyright
+
+

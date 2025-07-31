@@ -1,0 +1,8 @@
+name: data
+description: Data stack ovh
+runtime:
+  name: python
+  options:
+    typechecker: pyright
+
+
