@@ -16,9 +16,9 @@ class S3UserOutputData:
 
 
 class DataStackOutput:
-    def __init__(self, bucket_names: list[pulumi.Output[str]], s3_users: list[S3UserOutputData]):
+    def __init__(self, storage_names: list[pulumi.Output[str]], s3_users: list[S3UserOutputData]):
         self.s3_users = s3_users
-        self.bucket_names = bucket_names
+        self.storage_names = storage_names
 
 
 def get_data_stack_output(env: str) -> pulumi.Output[DataStackOutput]:
