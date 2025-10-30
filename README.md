@@ -199,3 +199,107 @@ Cette stack déploie les ressources de stockage S3, ainsi que les utilisateurs e
         -   `user_name`: (String) Le nom de l'utilisateur.
         -   `access_key_id`: (String) L'Access Key ID de l'utilisateur.
         -   `secret_access_key`: (String, **secret**) La Secret Access Key de l'utilisateur.
+
+---
+
+## CLI Outscale (S3 et OAPI)
+
+Cette CLI Python (module `outscale`) permet de gérer des buckets S3 compatibles Outscale (OSU) et les AccessKeys via oapi-cli.
+
+- Exécution générique:
+  - `python -m outscale [options globales] <groupe> <commande> [options]`
+- Pré-requis (install):
+  - Python 3.11+
+  - Dépendances: `pip install -r requirements.txt`
+
+Variables d’environnement utiles
+- S3/OSU
+  - `OUTSCALE_S3_ENDPOINT`: endpoint OSU/S3 (ex: `https://oos.eu-west-2.outscale.com` ou `https://s3.cloudgouv-eu-west-1.outscale.com`)
+  - `AWS_ACCESS_KEY_ID` et `AWS_SECRET_ACCESS_KEY`
+  - `AWS_REGION` (ex: `eu-west-2`)
+- OAPI (oapi-cli)
+  - `OSC_ACCESS_KEY`, `OSC_SECRET_KEY`, `OSC_REGION` (ou équivalents `OUTSCALE_ACCESS_KEY`, `OUTSCALE_SECRET_KEY`, `OUTSCALE_REGION`)
+
+Options globales communes
+- `--endpoint-url` (peut venir de `OUTSCALE_S3_ENDPOINT`)
+- `--region` (peut venir de `AWS_REGION`)
+- `--access-key` (peut venir de `AWS_ACCESS_KEY_ID`)
+- `--secret-key` (peut venir de `AWS_SECRET_ACCESS_KEY`)
+- `--debug` (trace détaillée des erreurs)
+
+### Groupe: bucket
+Commandes pour gérer des buckets OSU/S3.
+
+- Déployer (idempotent) un bucket et appliquer des tags:
+  - `outscale bucket deploy --name <bucket> [--tag key=value]...`
+  - Exemple:
+    ```bash
+    python -m outscale \
+      --endpoint-url "https://oos.eu-west-2.outscale.com" \
+      bucket deploy --name mon-bucket --tag env=preprod --tag owner=infra
+    ```
+
+- Supprimer un bucket:
+  - `outscale bucket delete --name <bucket> [--force]`
+  - `--force` vide d’abord le bucket (objets + versions) avant suppression.
+
+- Lister les buckets:
+  - `outscale bucket list [--raw]`
+
+- Appliquer une configuration CORS par défaut:
+  - `outscale bucket cors --name <bucket>`
+
+- Appliquer une Bucket Policy depuis un fichier JSON:
+  - `outscale bucket add-policy --name <bucket> --file <policy.json>`
+  - Exemple:
+    ```bash
+    python -m outscale \
+      --endpoint-url "https://oos.eu-west-2.outscale.com" \
+      bucket add-policy --name mon-bucket --file outscale/policies/preprod/raw-bucket.json
+    ```
+
+- Lire la Bucket Policy actuelle:
+  - `outscale bucket read-policy --name <bucket> [--raw]`
+
+- Appliquer une Lifecycle Configuration (JSON inline):
+  - `outscale bucket add-lifecycle --name <bucket> --policy '<JSON inline>' [--no-validate]`
+  - Exemple (suppression après 1 jour):
+    ```bash
+    python -m outscale \
+      --endpoint-url "https://oos.eu-west-2.outscale.com" \
+      bucket add-lifecycle \
+      --name mon-bucket \
+      --policy '{"Rules":[{"ID":"AutoDeleteAfter1Day","Prefix":"","Status":"Enabled","Expiration":{"Days":1}}]}'
+    ```
+
+- Lire la Lifecycle Configuration actuelle:
+  - `outscale bucket read-lifecycle --name <bucket> [--raw]`
+
+Notes S3/OSU
+- Assurez-vous que l’endpoint est bien OSU/S3 (et non FCU/API). Des exemples valides:
+  - `https://oos.eu-west-2.outscale.com`
+  - `https://s3.cloudgouv-eu-west-1.outscale.com`
+
+### Groupe: access-key (oapi-cli)
+Commandes pour lister/créer des AccessKeys via `oapi-cli`.
+
+- Lister les AccessKeys:
+  - `outscale access-key list [--oapi-bin <path>] [--raw] [--dry-run]`
+  - Exemple:
+    ```bash
+    python -m outscale access-key list --raw
+    ```
+
+- Créer une AccessKey avec un tag (append dans result.json par défaut):
+  - `outscale access-key create --tag <valeur> [--result-file <path>] [--oapi-bin <path>] [--raw]`
+  - Exemple:
+    ```bash
+    python -m outscale access-key create --tag dossierfacile --result-file result.json
+    ```
+
+Conseils
+- Vous pouvez mettre vos variables dans un fichier `.env` à la racine; elles seront chargées automatiquement si `python-dotenv` est présent.
+- En cas d’erreur `MalformedPolicy` côté Bucket Policy, vérifiez:
+  - `Principal` (utilisez `*` ou un ARN IAM valide),
+  - les `Resource` (qu’elles ciblent bien le bon bucket),
+  - la validité JSON (pas de trailing commas/commentaires).
