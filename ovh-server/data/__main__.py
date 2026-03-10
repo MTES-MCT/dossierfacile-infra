@@ -73,7 +73,8 @@ permissions = {
         get_storage_raw_file_name(env): ["s3:GetObject", "s3:ListBucket"],
         get_storage_watermark_doc_name(env): ["s3:PutObject", "s3:ListBucket"],
         get_storage_full_pdf_name(env): ["s3:PutObject", "s3:ListBucket"],
-        get_storage_filigrane_name(env): ["s3:GetObject", "s3:PutObject", "s3:ListBucket"]
+        get_storage_filigrane_name(env): ["s3:GetObject", "s3:PutObject", "s3:ListBucket"],
+        get_storage_raw_file_minified_name(env): ["s3:PutObject", "s3:ListBucket", "s3:DeleteObject"]
     },
     get_user_process_file_name(env): {
         get_storage_raw_file_name(env): ["s3:GetObject", "s3:ListBucket"],

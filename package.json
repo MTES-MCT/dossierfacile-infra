@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "@bitwarden/cli": "^2025.10.0"
+    "@bitwarden/cli": "^2025.12.1"
   }
 }
