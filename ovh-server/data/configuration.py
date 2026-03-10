@@ -6,7 +6,6 @@ get_storage_filigrane_name = lambda env: f"s-filigranefacile-{env}-temp"
 
 get_user_api_tenant_name = lambda env: f"u-dossierfacile-{env}-api-tenant"
 get_user_pdf_generator_name = lambda env: f"u-dossierfacile-{env}-pdf-generator"
-get_user_process_file_name = lambda env: f"u-dossierfacile-{env}-process-file"
 get_user_bo_name = lambda env: f"u-dossierfacile-{env}-bo"
 get_user_task_scheduler_name = lambda env: f"u-dossierfacile-{env}-task-scheduler"
 get_user_file_analysis_name = lambda env: f"u-dossierfacile-{env}-file-analysis"

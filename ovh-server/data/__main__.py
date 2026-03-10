@@ -6,7 +6,7 @@ import pulumi_ovh as ovh
 
 from data.configuration import get_storage_raw_file_name, get_storage_raw_file_minified_name, \
     get_storage_watermark_doc_name, get_storage_full_pdf_name, get_storage_filigrane_name, get_user_api_tenant_name, \
-    get_user_pdf_generator_name, get_user_process_file_name, get_user_bo_name, get_user_task_scheduler_name, \
+    get_user_pdf_generator_name, get_user_bo_name, get_user_task_scheduler_name, \
     get_user_file_analysis_name, get_user_filigranefacile_name
 from data.data_stack_output import S3UserOutputData, DataStackOutput
 from lib.stack_output_util import stack_data_name
@@ -38,7 +38,6 @@ for name in storage_names:
 user_names = [
     get_user_api_tenant_name(env),
     get_user_pdf_generator_name(env),
-    get_user_process_file_name(env),
     get_user_bo_name(env),
     get_user_task_scheduler_name(env),
     get_user_file_analysis_name(env),
@@ -73,11 +72,8 @@ permissions = {
         get_storage_raw_file_name(env): ["s3:GetObject", "s3:ListBucket"],
         get_storage_watermark_doc_name(env): ["s3:PutObject", "s3:ListBucket"],
         get_storage_full_pdf_name(env): ["s3:PutObject", "s3:ListBucket"],
-        get_storage_filigrane_name(env): ["s3:GetObject", "s3:PutObject", "s3:ListBucket"]
-    },
-    get_user_process_file_name(env): {
-        get_storage_raw_file_name(env): ["s3:GetObject", "s3:ListBucket"],
-        get_storage_raw_file_minified_name(env): ["s3:PutObject", "s3:ListBucket"]
+        get_storage_filigrane_name(env): ["s3:GetObject", "s3:PutObject", "s3:ListBucket"],
+        get_storage_raw_file_minified_name(env): ["s3:PutObject", "s3:ListBucket", "s3:DeleteObject"]
     },
     get_user_bo_name(env): {
         get_storage_raw_file_name(env): ["s3:GetObject", "s3:ListBucket"],
