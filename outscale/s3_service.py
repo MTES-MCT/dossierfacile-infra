@@ -553,3 +553,22 @@ def apply_bucket_encryption(
         raise
     click.secho(f"Encryption (SSE) appliquée sur {bucket_name}", fg="green")
 
+
+def get_bucket_total_size(s3_client, bucket_name: str) -> Tuple[int, int]:
+    """Retourne la taille totale (bytes) et le nombre d'objets d'un bucket."""
+    total_size_bytes = 0
+    object_count = 0
+    try:
+        paginator = s3_client.get_paginator("list_objects_v2")
+        for page in paginator.paginate(Bucket=bucket_name):
+            for obj in page.get("Contents", []) or []:
+                size = obj.get("Size", 0)
+                if isinstance(size, int):
+                    total_size_bytes += size
+                object_count += 1
+        return total_size_bytes, object_count
+    except ClientError as e:
+        code = e.response.get("Error", {}).get("Code")
+        if code in {"NoSuchBucket", "404", "NotFound"}:
+            raise click.ClickException(f"Bucket introuvable: {bucket_name}") from e
+        raise

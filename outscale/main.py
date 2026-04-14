@@ -50,6 +50,7 @@ from .s3_service import (
     apply_bucket_lifecycle,
     get_bucket_lifecycle,
     apply_bucket_encryption,  # ajout
+    get_bucket_total_size,
 )
 from .oapi_service import (
     run_oapi_cli,
@@ -419,6 +420,52 @@ def bucket_add_encryption(ctx: click.Context, name: str, encryption_json: str, n
             validate=not no_validate,
         )
         click.secho("✔ Encryption appliquée", fg="green")
+    except ClientError as e:
+        if ctx.obj.get("debug"):
+            raise
+        err = e.response.get("Error", {})
+        code = err.get("Code")
+        msg = err.get("Message") or str(e)
+        raise click.ClickException(f"Erreur S3 ({code}): {msg}") from e
+    except Exception as e:
+        if ctx.obj.get("debug"):
+            raise
+        raise click.ClickException(str(e)) from e
+
+
+@bucket.command("size")
+@click.option("--name", required=True, help="Nom du bucket à analyser.")
+@click.option("--raw/--no-raw", default=False, help="Affiche la réponse JSON brute.")
+@click.pass_context
+def bucket_size(ctx: click.Context, name: str, raw: bool):
+    """Affiche la taille totale d'un bucket S3 (en bytes et en Go)."""
+    try:
+        ak, sk, rg = resolve_s3_credentials(
+            ctx.obj.get("access_key"), ctx.obj.get("secret_key"), ctx.obj.get("region")
+        )
+        s3_client, _ = build_s3_client(
+            ctx.obj.get("endpoint_url"), ak, sk, rg, debug=ctx.obj.get("debug")
+        )
+        total_size_bytes, object_count = get_bucket_total_size(s3_client, bucket_name=name)
+
+        if raw:
+            click.echo(
+                json.dumps(
+                    {
+                        "Bucket": name,
+                        "ObjectCount": object_count,
+                        "TotalSizeBytes": total_size_bytes,
+                    },
+                    ensure_ascii=False,
+                    indent=2,
+                )
+            )
+            return
+
+        total_size_gb = total_size_bytes / (1024 ** 3)
+        click.echo(f"Bucket: {name}")
+        click.echo(f"Objets: {object_count}")
+        click.echo(f"Taille totale: {total_size_bytes} bytes ({total_size_gb:.2f} GB)")
     except ClientError as e:
         if ctx.obj.get("debug"):
             raise
