@@ -77,7 +77,8 @@ permissions = {
     },
     get_user_bo_name(env): {
         get_storage_raw_file_name(env): ["s3:GetObject", "s3:ListBucket"],
-        get_storage_watermark_doc_name(env): ["s3:GetObject", "s3:ListBucket"]
+        get_storage_watermark_doc_name(env): ["s3:GetObject", "s3:ListBucket"],
+        get_storage_raw_file_minified_name(env): ["s3:GetObject", "s3:ListBucket"]
     },
     get_user_task_scheduler_name(env): {
         get_storage_raw_file_name(env): ["s3:DeleteObject", "s3:ListBucket"],
