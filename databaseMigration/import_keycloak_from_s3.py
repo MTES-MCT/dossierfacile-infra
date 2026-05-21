@@ -1,20 +1,20 @@
 import argparse
+import shlex
 import subprocess
 import sys
-import shlex
 
 import boto3
 from botocore.config import Config
 
 
 def generate_presigned_get_url(
-    endpoint_url,
-    region,
-    access_key,
-    secret_key,
-    bucket,
-    object_key,
-    expires_in,
+        endpoint_url,
+        region,
+        access_key,
+        secret_key,
+        bucket,
+        object_key,
+        expires_in,
 ):
     """Genere une URL presignee GET pour un objet S3."""
     client = boto3.client(
@@ -34,12 +34,14 @@ def generate_presigned_get_url(
     )
 
 
-def run_scalingo_command(app_name, size, script):
+def run_scalingo_command(app_name, region, size, script):
     """Execute un script shell dans un conteneur one-off Scalingo via stdin."""
     full_cmd = [
         "scalingo",
         "--app",
         app_name,
+        "--region",
+        region,
         "run",
         "--size",
         size,
@@ -77,6 +79,7 @@ def main():
     )
 
     parser.add_argument("--app", required=True, help="Nom de l'app Scalingo Keycloak")
+    parser.add_argument("--region", required=True, help="Region de l'app scalingo")
     parser.add_argument(
         "--size",
         required=True,
@@ -112,7 +115,6 @@ def main():
     if not object_key:
         print("ERROR: --s3-object-key ne doit pas etre vide.")
         sys.exit(1)
-
 
     print("[1/3] Generation de l'URL presignee GET...")
     try:
@@ -166,7 +168,7 @@ export JAVA_OPTS_APPEND="${{JAVA_OPTS_APPEND:-}} -Dquarkus.transaction-manager.d
 echo '[OK] Import Keycloak termine.'
 """
 
-    exit_code = run_scalingo_command(args.app, args.size, setup_script)
+    exit_code = run_scalingo_command(args.app, args.region, args.size, setup_script)
 
     if exit_code == 0:
         print("\nOK: Import Keycloak reussi.")
@@ -178,4 +180,3 @@ echo '[OK] Import Keycloak termine.'
 
 if __name__ == "__main__":
     main()
-

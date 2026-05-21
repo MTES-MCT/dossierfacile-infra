@@ -35,10 +35,12 @@ def generate_presigned_put_url(
     )
 
 
-def run_scalingo_command(app_name, size, script):
+def run_scalingo_command(app_name,region, size, script):
     """Execute un script shell dans un conteneur one-off Scalingo via stdin."""
     full_cmd = [
         "scalingo",
+        "--region" ,
+        region,
         "--app",
         app_name,
         "run",
@@ -78,6 +80,7 @@ def main():
     )
 
     parser.add_argument("--app", required=True, help="Nom de l'app Scalingo Keycloak")
+    parser.add_argument("--region", required=True, help="Region de l'app scalingo")
     parser.add_argument("--env", required=True, help="Environnement cible (ex: dev, preprod, prod)")
     parser.add_argument(
         "--size",
@@ -142,7 +145,8 @@ trap 'kill $KPID 2>/dev/null || true' EXIT
 
 echo '[1/3] Export Keycloak...'
 mkdir -p "$EXPORT_DIR"
-/app/keycloak/bin/kc.sh export --dir "$EXPORT_DIR" --users "$USERS_MODE"
+export JAVA_OPTS_APPEND="-Xmx4G"
+/app/keycloak/bin/kc.sh export --dir "$EXPORT_DIR" --users "$USERS_MODE" --users-per-file 500 --optimized
 
 echo '[2/3] Archivage + upload en streaming vers S3...'
 UPLOAD_RESP_FILE=/tmp/s3-upload-response.txt
@@ -158,7 +162,7 @@ fi
 echo '[OK] Export + upload termines.'
 """
 
-    exit_code = run_scalingo_command(args.app, args.size, setup_script)
+    exit_code = run_scalingo_command(args.app, args.region, args.size, setup_script)
 
     if exit_code == 0:
         print("\nOK: Export Keycloak + upload S3 reussis.")

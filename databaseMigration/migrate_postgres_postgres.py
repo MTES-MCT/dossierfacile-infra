@@ -3,9 +3,9 @@ import sys
 import argparse
 import shlex
 
-def run_scalingo_command(app_name, size, command):
+def run_scalingo_command(app_name, region, size, command):
     """Exécute une commande sur un conteneur one-off Scalingo."""
-    full_cmd = ["scalingo", "--app", app_name, "run", '--size', size, command]
+    full_cmd = ["scalingo", "--region" , region, "--app", app_name, "run", '--size', size, command]
     try:
         process = subprocess.Popen(
             full_cmd,
@@ -26,6 +26,7 @@ def run_scalingo_command(app_name, size, command):
 def main():
     parser = argparse.ArgumentParser(description="Migration Tool Dossier Facile")
     parser.add_argument("--app", required=True, help="Nom de l'app Scalingo cible")
+    parser.add_argument("--region", required=True, help="Region de l'app scalingo")
     parser.add_argument("--size", required=True, choices=['S', 'M', 'L', 'XL', '2XL'], help="Taille du container one-off sur Scalingo")
     parser.add_argument("--source-url", required=True, help="URL PostgreSQL source (ex: postgresql://user:pass@host/db)")
     parser.add_argument("--target-url", required=False, help="URL PostgreSQL cible (base vide)")
@@ -106,7 +107,7 @@ echo '[OK] Migration PostgreSQL terminée.';
 
     full_script = f"bash -lc {shlex.quote(setup_script)}"
 
-    exit_code = run_scalingo_command(args.app, args.size, full_script)
+    exit_code = run_scalingo_command(args.app, args.region, args.size, full_script)
 
     if exit_code == 0:
         print("\n✅ Migration terminée avec succès.")
