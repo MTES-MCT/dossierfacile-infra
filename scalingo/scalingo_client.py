@@ -85,11 +85,14 @@ class ScalingoClient:
         response = self._make_request('GET', f'{self.api_url}/apps/{app_name}/collaborators')
         return response['collaborators']
 
-    def invite_user(self, app_name: str, email: str) -> Optional[str]:
+    def invite_user(self, app_name: str, email: str, limited: bool = False) -> Optional[str]:
+        # Scalingo defaults `is_limited` to true, which would grant a read-only
+        # "Limited Collaborator" role. Send it explicitly so a full collaborator
+        # is created unless `limited` is requested.
         response = self._make_request(
             'POST',
             f'{self.api_url}/apps/{app_name}/collaborators',
-            json={'collaborator': {'email': email}}
+            json={'collaborator': {'email': email, 'is_limited': limited}}
         )
         if response:
             return response['collaborator']['invitation_link']
