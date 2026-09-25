@@ -86,6 +86,7 @@
             pipx inject poetry poetry-plugin-export --force
 
             (cd ovh-server && poetry lock && poetry install)
+            (cd scalingo && poetry lock && poetry install)
 
             pulumi login "$S3_BACKEND_URL"
 
